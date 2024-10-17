@@ -25,11 +25,13 @@ proxypools = file_to_list("proxies.txt")
 if proxypools == False:
     print("Missing proxies.txt")
     sys.exit()
+proxypools = list(filter(None, proxypools))
 
 urls = file_to_list("urls.txt")
 if urls == False:
     print("Missing urls.txt")
     sys.exit()
+urls = list(filter(None, urls))
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:130.0) Gecko/20100101 Firefox/130.0',
@@ -69,7 +71,7 @@ def get_cookies():
         urldecoy = urls[random.choice(range(0, len(urls)))]
         print("get new cookies", '...', flush=True, end="")
         proxycamoufox, proxies = get_new_proxy()
-        with Camoufox(headless=True, geoip=True, os=('windows'), screen=Screen(max_width=1920, max_height=1080)) as browser:
+        with Camoufox(headless=True, geoip=True, os=('macos'), screen=Screen(max_width=1920, max_height=1080)) as browser:
             try:
                 page = browser.new_page(locale="en-US", proxy=proxycamoufox)
                 response = page.goto(urldecoy, timeout=60000, wait_until="networkidle")    
