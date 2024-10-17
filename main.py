@@ -69,7 +69,7 @@ def get_cookies():
         urldecoy = urls[random.choice(range(0, len(urls)))]
         print("get new cookies", '...', flush=True, end="")
         proxycamoufox, proxies = get_new_proxy()
-        with Camoufox(headless=True, geoip=True, os=('macos'), screen=Screen(max_width=1920, max_height=1080)) as browser:
+        with Camoufox(headless=True, geoip=True, os=('linux'), screen=Screen(max_width=1920, max_height=1080)) as browser:
             try:
                 page = browser.new_page(locale="en-US", proxy=proxycamoufox)
                 response = page.goto(urldecoy, timeout=60000, wait_until="networkidle")    
