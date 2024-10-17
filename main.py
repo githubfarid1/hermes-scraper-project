@@ -10,6 +10,11 @@ import time
 import traceback
 import os
 import sys
+from dotenv import load_dotenv
+from pathlib import Path
+
+
+load_dotenv()
 
 def file_to_list(filepath):
     if os.path.exists(filepath):
@@ -20,6 +25,26 @@ def file_to_list(filepath):
         return datalist 
     else:
         return False
+
+
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+
+
+def send_to_telegram(message):
+    apiToken = TELEGRAM_BOT_TOKEN
+    chatID = TELEGRAM_CHAT_ID
+    apiURL = f'https://api.telegram.org/bot{apiToken}/sendMessage'
+    try:
+        response = requests.post(apiURL, json={'chat_id': chatID, 'text': message, "parse_mode": "HTML"})
+        # print(response.text)
+    except Exception as e:
+        print(e)
+
+def parse_message_to_html(link):
+    html = "<strong>Product Available</strong>\n"
+    html += f'<a href="{link}">Go to Page</a>'
+    return html
 
 proxypools = file_to_list("proxies.txt")
 if proxypools == False:
@@ -97,7 +122,7 @@ def get_cookies():
     return cookies, proxies
 
 def parse(cookies, proxies, url):
-    for _ in range(0,3):
+    for _ in range(0,5):
         try:
             response = requests.get(url=url, cookies=cookies, headers=headers, proxies=proxies)
         except Exception as e:
@@ -109,6 +134,8 @@ def parse(cookies, proxies, url):
             print("Failed")
             return False
         if response.status_code == 200:
+            html = parse_message_to_html(link=url)
+            send_to_telegram(html)
             print("Ready")
         elif response.status_code == 404:
             print("Empty")
