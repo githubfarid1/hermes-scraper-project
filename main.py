@@ -65,8 +65,8 @@ def get_new_proxy():
 
 def get_cookies():
     response = False
-    urldecoy = urls[random.choice(range(0, len(urls)))]
     while True:
+        urldecoy = urls[random.choice(range(0, len(urls)))]
         print("get new cookies", '...', flush=True, end="")
         proxycamoufox, proxies = get_new_proxy()
         with Camoufox(headless=True, geoip=True, os=('macos'), screen=Screen(max_width=1920, max_height=1080)) as browser:
