@@ -107,7 +107,8 @@ def get_cookies():
                     print("Blocked")
                     continue
                 else:
-                    pass
+                    print(response.body().decode("utf-8"))
+                    
                 page.wait_for_selector("h-main-content", timeout=60000)
                 while True:
                     cookies = page.context.cookies()
