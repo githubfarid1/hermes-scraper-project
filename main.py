@@ -110,7 +110,7 @@ def get_cookies():
                     print(response.body().decode("utf-8"))
 
                 # page.wait_for_selector("h-main-content", timeout=60000)
-                time.sleep(10)
+                time.sleep(20)
                 while True:
                     cookies = page.context.cookies()
                     try:
