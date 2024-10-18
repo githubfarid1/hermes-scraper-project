@@ -101,6 +101,13 @@ def get_cookies():
             try:
                 response = page.goto(urldecoy, timeout=60000, wait_until="networkidle")    
                 # breakpoint()
+                page.wait_for_selector("iframe", timeout=60000)
+                # page.wait_for_selector('iframe')
+                if 'bv' in response.body().decode("utf-8"):
+                    print("Blocked")
+                    continue
+                else:
+                    breakpoint()
                 page.wait_for_selector("h-main-content", timeout=60000)
                 while True:
                     cookies = page.context.cookies()
@@ -116,6 +123,7 @@ def get_cookies():
                 break
             except Exception as e:
                 print("Failed")
+                # breakpoint()
                 print(traceback.format_exc())
                 continue
     print("OK")
@@ -134,8 +142,8 @@ def parse(cookies, proxies, url):
             print("Failed")
             return False
         if response.status_code == 200:
-            html = parse_message_to_html(link=url)
-            send_to_telegram(html)
+            # html = parse_message_to_html(link=url)
+            # send_to_telegram(html)
             print("Ready")
         elif response.status_code == 404:
             print("Empty")
