@@ -106,10 +106,10 @@ def get_cookies():
                 if 'bv' in response.body().decode("utf-8"):
                     print("Blocked")
                     continue
-                else:
-                    print(response.body().decode("utf-8"))
+                # else:
+                #     print(response.body().decode("utf-8"))
 
-                # page.wait_for_selector("h-main-content", timeout=60000)
+                page.wait_for_selector("h-main-content", timeout=60000)
                 time.sleep(20)
                 while True:
                     cookies = page.context.cookies()
