@@ -97,7 +97,7 @@ def get_cookies():
         print("get new cookies", '...', flush=True, end="")
         proxycamoufox, proxies = get_new_proxy()
         with Camoufox(headless=True, proxy=proxycamoufox, geoip=True, os=('macos','windows', 'linux'), screen=Screen(max_width=1920, max_height=1080)) as browser:
-            page = browser.new_page(locale="en-US")
+            page = browser.new_page(locale="en-US", java_script_enabled=True)
             try:
                 response = page.goto(urldecoy, timeout=60000, wait_until="networkidle")    
                 # breakpoint()
@@ -107,7 +107,7 @@ def get_cookies():
                     print("Blocked")
                     continue
                 else:
-                    breakpoint()
+                    pass
                 page.wait_for_selector("h-main-content", timeout=60000)
                 while True:
                     cookies = page.context.cookies()
