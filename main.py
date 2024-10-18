@@ -12,6 +12,8 @@ import os
 import sys
 from dotenv import load_dotenv
 from pathlib import Path
+from bs4 import BeautifulSoup
+from urllib.parse import quote_plus, quote
 
 
 load_dotenv()
@@ -90,6 +92,46 @@ def get_new_proxy():
     }
     return proxycamoufox, proxies
 
+def get_captcha_url(response, targeturl):
+    restext = response.body().decode("utf-8")
+    resheaders = response.all_headers()
+    dd_cookie = resheaders.get('set-cookie').split('datadome=')[1].split(';')[0]
+    soup = BeautifulSoup(restext, 'html.parser')
+    script_tag = soup.find('script')
+    dd_script = str(script_tag)
+    dd_script = dd_script.replace('<script data-cfasync="false">var dd=', "")
+    dd_script = dd_script.replace('</script>', "")
+
+    # Replace single quotes with double quotes
+    json_string = dd_script.replace("'", '"')
+
+    # Parse the string into a JSON object
+    dd = json.loads(json_string)
+    if  "t" in dd:
+        # print("found t")
+        # params = {
+        #     'initialCid': dd['cid'],
+        #     'hash': dd['hsh'],
+        #     'cid': dd_cookie,
+        #     't': dd['t'],
+        #     'referer': targeturl,
+        #     's': dd['s'],
+        #     'e': dd['e'],
+        #     'dm': 'cd'
+        # }
+
+        captcha_url = "https://geo.captcha-delivery.com/captcha/"
+
+        url = f"{captcha_url}?initialCid={dd['cid']}&hash={dd['hsh']}&cid={dd_cookie}&t={dd['t']}&referer={quote_plus(targeturl)}&s={dd['s']}&e={dd['e']}&dm=cd"
+        
+        url = url.replace("==", "%3D%3D")
+        if "t=bv" in url:
+            return False    
+        else:
+            return url    
+    else:
+        return False
+
 def get_cookies():
     response = False
     while True:
@@ -103,14 +145,18 @@ def get_cookies():
                 # breakpoint()
                 page.wait_for_selector("iframe", timeout=60000)
                 # page.wait_for_selector('iframe')
-                if 'bv' in response.body().decode("utf-8"):
-                    print("Blocked")
-                    continue
-                # else:
-                #     print(response.body().decode("utf-8"))
+                captcha_url = get_captcha_url(response=response, targeturl=urldecoy)
+                if captcha_url:
+                    print(captcha_url)
+                    if 't=bv' in captcha_url:
+                        print("Blocked")
+                        continue
+                    else:
+                        #todo: solve captcha url with 2captcha or captchasolver
+                        pass
+
 
                 page.wait_for_selector("h-main-content", timeout=60000)
-                time.sleep(20)
                 while True:
                     cookies = page.context.cookies()
                     try:
@@ -144,8 +190,8 @@ def parse(cookies, proxies, url):
             print("Failed")
             return False
         if response.status_code == 200:
-            # html = parse_message_to_html(link=url)
-            # send_to_telegram(html)
+            html = parse_message_to_html(link=url)
+            send_to_telegram(html)
             print("Ready")
         elif response.status_code == 404:
             print("Empty")
