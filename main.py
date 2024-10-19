@@ -31,6 +31,7 @@ def file_to_list(filepath):
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+IDLE_TIME = os.getenv('IDLE_TIME')
 
 
 def send_to_telegram(message):
@@ -213,9 +214,8 @@ def main():
                     cookies, proxies = get_cookies()
                     continue
             time.sleep(random.choice(range(3,10)))
-        stime = 60*10
-        print(stime, "seconds idle...")
-        time.sleep(stime)
+        print(IDLE_TIME, "seconds idle...")
+        time.sleep(int(IDLE_TIME))
 
 if __name__=='__main__':
     main()
