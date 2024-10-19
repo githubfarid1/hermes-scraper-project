@@ -213,7 +213,7 @@ def main():
                 else:
                     cookies, proxies = get_cookies()
                     continue
-            time.sleep(random.choice(range(3,10)))
+            time.sleep(random.choice(range(5,15)))
         print(IDLE_TIME, "seconds idle...")
         time.sleep(int(IDLE_TIME))
 
